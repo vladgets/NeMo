@@ -1,0 +1,112 @@
+# =============================================================================
+# Copyright 2020 NVIDIA. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# =============================================================================
+
+# rules
+replacement_rules = {"what's": "what is", "who's": "who is"}
+starting_phrases = ["tell me", "can you", "please"]
+question_words = ["what", "why", "who", "how old", "how", "do", "does", "where"]
+verb_words = ["is", "are", "do", "does"]
+belonging_word_convertor = {"my": "your", "your": "my", "yours": "my", "you": "i", "i" : "you"}
+
+
+# Function that extends the precise answer based on the question
+def extend_answer(question, answer):
+    print(question + " (" + answer + ") => ", end = " ")
+
+    # move to lower case
+    question = question.lower()
+
+    # extend shortcuts in the question word
+    for key in replacement_rules:
+        question = question.replace(key, replacement_rules[key])
+
+    # find starting question word
+    question_word = None
+    for word in question_words:
+        if question.startswith(word):
+            question_word = word
+            question = question[len(word)+1:]
+            break
+
+    # in this case you do not add question to the answer
+    if question_word is None or question_word is "how":
+        return answer
+
+    # find starting verb word
+    verb_word = None
+    for word in verb_words:
+        if question.startswith(word):
+            if word is not "do" and word is not "does":
+                if word == "are":
+                    verb_word = "am"
+                else:
+                    verb_word = word
+            question = question[len(word) + 1:]
+            break
+
+    # check if a phrase start with a belonging word that should be converted to the opposite one
+    for key in belonging_word_convertor:
+        if question.startswith(key):
+            question = question.replace(key, belonging_word_convertor[key])
+            break
+
+    # create full answer
+    full_answer = question
+
+    if verb_word is not None:
+        full_answer += " " + verb_word
+
+    full_answer += " " + answer
+
+    # Capitalize the first letter
+    full_answer = full_answer[0].upper() + full_answer[1:]
+
+    return full_answer
+
+
+# Uni-test of the module
+if __name__ == "__main__":
+    resp = extend_answer("what's your name", "Vlad")
+    assert resp == "My name is Vlad", resp
+    print(resp)
+
+    resp = extend_answer("what's your favorite type of food", "mango")
+    assert resp == "My favorite type of food is mango", resp
+    print(resp)
+
+    resp = extend_answer("what do you like to eat", "mango")
+    assert resp == "I like to eat mango", resp
+    print(resp)
+
+    resp = extend_answer("how old are you", "22 years old")
+    assert resp == "I am 22 years old", resp
+    print(resp)
+
+    resp = extend_answer("how often are you wrong", "I am never wrong")
+    assert resp == "I am never wrong", resp
+    print(resp)
+
+    resp = extend_answer("where do you live", "in the cloud")
+    assert resp == "I live in the cloud", resp
+    print(resp)
+
+    resp = extend_answer("what do you like to eat", "mango")
+    assert resp == "I like to eat mango", resp
+    print(resp)
+
+    resp = extend_answer("who is your favorite tennis player", "novak djocovic")
+    assert resp == "My favorite tennis player is novak djocovic", resp
+    print(resp)
