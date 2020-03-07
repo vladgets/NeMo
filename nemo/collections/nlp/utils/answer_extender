@@ -15,7 +15,7 @@
 # =============================================================================
 
 # rules
-replacement_rules = {"what's": "what is", "who's": "who is"}
+replacement_rules = {"what's": "what is", "who's": "who is", "?": ""}
 starting_phrases = ["tell me", "can you", "please"]
 question_words = ["what", "why", "who", "how old", "how", "do", "does", "where"]
 verb_words = ["is", "are", "do", "does"]
@@ -29,7 +29,7 @@ def extend_answer(question, answer):
     # move to lower case
     question = question.lower()
 
-    # extend shortcuts in the question word
+    # extend shortcuts in the question word and remove question sign
     for key in replacement_rules:
         question = question.replace(key, replacement_rules[key])
 
@@ -107,6 +107,6 @@ if __name__ == "__main__":
     assert resp == "I like to eat mango", resp
     print(resp)
 
-    resp = extend_answer("who is your favorite tennis player", "novak djocovic")
+    resp = extend_answer("who is your favorite tennis player?", "novak djocovic")
     assert resp == "My favorite tennis player is novak djocovic", resp
     print(resp)
