@@ -17,14 +17,20 @@
 # rules
 replacement_rules = {"what's": "what is", "who's": "who is", "?": ""}
 starting_phrases = ["tell me", "can you", "please"]
-question_words = ["what", "why", "who", "how old", "how", "do", "does", "where"]
+relation_words = ["from"]
+question_words = ["what", "why", "who", "how old", "how long", "how", "do", "does", "where"]
 verb_words = ["is", "are", "do", "does"]
-belonging_word_convertor = {"my": "your", "your": "my", "yours": "my", "you": "i", "i" : "you"}
+belonging_word_convertor = {"my": "your", "your": "my", "yours": "my", "you": "i", "i" : "you",
+                            "can you": "i can", "could you": "i could", "have you": "i have"}
 
 
 # Function that extends the precise answer based on the question
 def extend_answer(question, answer):
     print(question + " (" + answer + ") => ", end = " ")
+
+    # Heuristics for long factual answer, where there is no need to copy question into the answer
+    if len(answer.split()) >= 5:
+        return answer
 
     # move to lower case
     question = question.lower()
@@ -32,6 +38,14 @@ def extend_answer(question, answer):
     # extend shortcuts in the question word and remove question sign
     for key in replacement_rules:
         question = question.replace(key, replacement_rules[key])
+
+    # find possible relation word, like "from"
+    relation_word = None
+    for word in relation_words:
+        if question.startswith(word):
+            relation_word = word
+            question = question[len(word) + 1:]
+            break
 
     # find starting question word
     question_word = None
@@ -41,8 +55,16 @@ def extend_answer(question, answer):
             question = question[len(word)+1:]
             break
 
+    # Try to find possible relation word like "from" for a second fime in case they are coming after the question
+    if relation_word is None:
+        for word in relation_words:
+            if question.startswith(word):
+                relation_word = word
+                question = question[len(word) + 1:]
+                break
+
     # in this case you do not add question to the answer
-    if question_word is None or question_word is "how":
+    if question_word is None:
         return answer
 
     # find starting verb word
@@ -65,6 +87,9 @@ def extend_answer(question, answer):
 
     # create full answer
     full_answer = question
+
+    if relation_word is not None:
+        full_answer += " " + relation_word
 
     if verb_word is not None:
         full_answer += " " + verb_word
@@ -95,18 +120,38 @@ if __name__ == "__main__":
     assert resp == "I am 22 years old", resp
     print(resp)
 
-    resp = extend_answer("how often are you wrong", "I am never wrong")
-    assert resp == "I am never wrong", resp
-    print(resp)
-
     resp = extend_answer("where do you live", "in the cloud")
     assert resp == "I live in the cloud", resp
     print(resp)
 
-    resp = extend_answer("what do you like to eat", "mango")
-    assert resp == "I like to eat mango", resp
-    print(resp)
-
     resp = extend_answer("who is your favorite tennis player?", "novak djocovic")
     assert resp == "My favorite tennis player is novak djocovic", resp
+    print(resp)
+
+    resp = extend_answer("what can you talk about?", "the weather")
+    assert resp == "I can talk about the weather", resp
+    print(resp)
+
+    resp = extend_answer("From where do you get the weather data?", "Weatherstack api")
+    assert resp == "I get the weather data from Weatherstack api", resp
+    print(resp)
+
+    resp = extend_answer("Where from do you get the weather data?", "Weatherstack api")
+    assert resp == "I get the weather data from Weatherstack api", resp
+    print(resp)
+
+    resp = extend_answer("What weather conditions cause fog?", "Evaporation fog is caused by cold air passing over warmer water or moist land")
+    assert resp == "Evaporation fog is caused by cold air passing over warmer water or moist land", resp
+    print(resp)
+
+    resp = extend_answer("How long have you studied the weather?", "all my life")
+    assert resp == "I have studied the weather all my life", resp
+    print(resp)
+
+    resp = extend_answer("What can you do?", "I can talk about the weather")
+    assert resp == "I can talk about the weather", resp
+    print(resp)
+
+    resp = extend_answer("How hail is formed?", "Hailstones are formed by layers of water attaching and freezing in a large cloud.")
+    assert resp == "Hailstones are formed by layers of water attaching and freezing in a large cloud.", resp
     print(resp)
