@@ -18,7 +18,7 @@
 replacement_rules = {"what's": "what is", "who's": "who is", "?": ""}
 starting_phrases = ["tell me", "can you", "please"]
 relation_words = ["from"]
-question_words = ["what", "why", "who", "how old", "how long", "how", "do", "does", "where"]
+question_words = ["what", "what about", "why", "who", "how old", "how long", "how", "do", "does", "where"]
 verb_words = ["is", "are", "do", "does"]
 belonging_word_convertor = {"my": "your", "your": "my", "yours": "my", "you": "i", "i" : "you",
                             "can you": "i can", "could you": "i could", "have you": "i have"}
