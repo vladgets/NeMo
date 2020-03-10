@@ -30,7 +30,7 @@ def extend_answer(question, answer):
 
     # Heuristics for long factual answer, where there is no need to copy question into the answer
     if len(answer.split()) >= 5:
-        return answer
+        return answer[0].upper() + answer[1:]
 
     # move to lower case
     question = question.lower()
@@ -140,8 +140,8 @@ if __name__ == "__main__":
     assert resp == "I get the weather data from Weatherstack api", resp
     print(resp)
 
-    resp = extend_answer("What weather conditions cause fog?", "Evaporation fog is caused by cold air passing over warmer water or moist land")
-    assert resp == "Evaporation fog is caused by cold air passing over warmer water or moist land", resp
+    resp = extend_answer("What weather conditions cause fog?", "cold air passing over warmer water or moist land")
+    assert resp == "Cold air passing over warmer water or moist land", resp
     print(resp)
 
     resp = extend_answer("How long have you studied the weather?", "all my life")
