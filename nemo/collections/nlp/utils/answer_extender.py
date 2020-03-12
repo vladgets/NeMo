@@ -18,10 +18,11 @@
 replacement_rules = {"what's": "what is", "who's": "who is", "?": ""}
 starting_phrases = ["tell me", "can you", "please"]
 relation_words = ["from"]
-question_words = ["what", "what about", "why", "who", "how old", "how long", "how", "do", "does", "where"]
+question_words = ["what about", "what else", "what", "why", "who", "how old", "how long", "how", "do", "does", "where"]
 verb_words = ["is", "are", "do", "does"]
 belonging_word_convertor = {"my": "your", "your": "my", "yours": "my", "you": "i", "i" : "you",
-                            "can you": "i can", "could you": "i could", "have you": "i have"}
+                            "can you": "i can", "could you": "i could", "have you": "i have", "are you": "i am"}
+additional_replacements = {" yourself": "", "you": "me", "your": "my", " me ": " you "}
 
 
 # Function that extends the precise answer based on the question
@@ -72,18 +73,22 @@ def extend_answer(question, answer):
     for word in verb_words:
         if question.startswith(word):
             if word is not "do" and word is not "does":
-                if word == "are":
-                    verb_word = "am"
-                else:
-                    verb_word = word
-            question = question[len(word) + 1:]
+                verb_word = word
+            if not question.startswith("are you") or question.startswith("are your"):
+                question = question[len(word) + 1:]
             break
 
     # check if a phrase start with a belonging word that should be converted to the opposite one
     for key in belonging_word_convertor:
         if question.startswith(key):
             question = question.replace(key, belonging_word_convertor[key])
+            if question.startswith("i "):
+                verb_word = None
             break
+
+    # additional replacements
+    for key in additional_replacements:
+        question = question.replace(key, additional_replacements[key])
 
     # create full answer
     full_answer = question
@@ -104,6 +109,7 @@ def extend_answer(question, answer):
 
 # Uni-test of the module
 if __name__ == "__main__":
+
     resp = extend_answer("what's your name", "Vlad")
     assert resp == "My name is Vlad", resp
     print(resp)
@@ -126,6 +132,10 @@ if __name__ == "__main__":
 
     resp = extend_answer("who is your favorite tennis player?", "novak djocovic")
     assert resp == "My favorite tennis player is novak djocovic", resp
+    print(resp)
+
+    resp = extend_answer("who are your favorite tennis players?", "djocovic and nadal")
+    assert resp == "My favorite tennis players are djocovic and nadal", resp
     print(resp)
 
     resp = extend_answer("what can you talk about?", "the weather")
@@ -154,4 +164,20 @@ if __name__ == "__main__":
 
     resp = extend_answer("How hail is formed?", "Hailstones are formed by layers of water attaching and freezing in a large cloud.")
     assert resp == "Hailstones are formed by layers of water attaching and freezing in a large cloud.", resp
+    print(resp)
+
+    resp = extend_answer("Who are you named after?", "the artificial intelligent assistant")
+    assert resp == "I am named after the artificial intelligent assistant", resp
+    print(resp)
+
+    resp = extend_answer("What else can you talk about?", "the weather")
+    assert resp == "I can talk about the weather", resp
+    print(resp)
+
+    resp = extend_answer("What powers you?", "Nvidia GPU")
+    assert resp == "Powers me Nvidia GPU", resp
+    print(resp)
+
+    resp = extend_answer("What else can you tell me about yourself?", "the weather")
+    assert resp == "I can tell you about the weather", resp
     print(resp)
