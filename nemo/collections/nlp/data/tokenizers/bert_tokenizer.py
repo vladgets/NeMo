@@ -130,6 +130,53 @@ class NemoBertTokenizer(TokenizerSpec):
         text = self.tokens_to_text(tokens_clean)
         return text
 
+    def batch_encode_plus(self, text, max_length=None, pad_to_max_length=False, return_tensors=None):
+        """
+        Wrapper to an appropriate function from HF.
+        Returns a dictionary containing the encoded sequence or sequence pair and additional information:
+        the mask for sequence classification and the overflowing elements if a ``max_length`` is specified.
+
+        Args:
+            text (:obj:`str`, :obj:`List[str]` or :obj:`List[int]` (the later only for not-fast tokenizers)):
+            The first sequence to be encoded. This can be a string, a list of strings (tokenized string using
+            the `tokenize` method) or a list of integers (tokenized string ids using the `convert_tokens_to_ids`
+            method)
+            max_length (:obj:`int`, `optional`, defaults to :obj:`None`):
+                If set to a number, will limit the total sequence returned so that it has a maximum length.
+                If there are overflowing tokens, those will be added to the returned dictionary
+                You can set it to the maximal input size of the model with `max_length = tokenizer.model_max_length`.
+            pad_to_max_length (:obj:`bool`, `optional`, defaults to :obj:`False`):
+                If set to True, the returned sequences will be padded according to the model's padding side and
+                padding index, up to their max length. If no max length is specified, the padding is done up to the
+                model's max length. The tokenizer padding sides are handled by the class attribute `padding_side`
+                which can be set to the following strings:
+                - 'left': pads on the left of the sequences
+                - 'right': pads on the right of the sequences
+                Defaults to False: no padding.
+            return_tensors (:obj:`str`, `optional`, defaults to :obj:`None`):
+                Can be set to 'tf' or 'pt' to return respectively TensorFlow :obj:`tf.constant`
+                or PyTorch :obj:`torch.Tensor` instead of a list of python integers.
+        """
+        tokens = self.tokenizer.batch_encode_plus(
+            text, max_length=max_length, pad_to_max_length=pad_to_max_length, return_tensors=return_tensors
+        )
+        return tokens
+
+    def decode(self, text, skip_special_tokens=False, clean_up_tokenization_spaces=True):
+        """
+        Wrapper to an appropriate function from HF.
+        Converts a sequence of ids (integer) in a string, using the tokenizer and vocabulary
+        with options to remove special tokens and clean up tokenization spaces.
+        Args:
+            token_ids: list of tokenized input ids. Can be obtained using the `encode` or `encode_plus` methods.
+            skip_special_tokens: if set to True, will replace special tokens.
+            clean_up_tokenization_spaces: if set to True, will clean up the tokenization spaces.
+        Returns:
+            The decoded string
+        """
+        text = self.tokenizer.decode(text, skip_special_tokens, clean_up_tokenization_spaces)
+        return text
+
     @property
     def pad_id(self):
         return self.tokens_to_ids([getattr(self, 'pad_token')])[0]

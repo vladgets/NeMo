@@ -20,7 +20,7 @@ from typing import List, Optional
 
 from transformers import (
     ROBERTA_PRETRAINED_CONFIG_ARCHIVE_MAP,
-    ROBERTA_PRETRAINED_MODEL_ARCHIVE_MAP,
+    ROBERTA_PRETRAINED_MODEL_ARCHIVE_LIST,
     RobertaConfig,
     RobertaModel,
 )

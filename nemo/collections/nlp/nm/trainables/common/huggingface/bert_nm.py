@@ -18,7 +18,7 @@
 
 from typing import List, Optional
 
-from transformers import BERT_PRETRAINED_CONFIG_ARCHIVE_MAP, BERT_PRETRAINED_MODEL_ARCHIVE_MAP, BertConfig, BertModel
+from transformers import BERT_PRETRAINED_CONFIG_ARCHIVE_MAP, BERT_PRETRAINED_MODEL_ARCHIVE_LIST, BertConfig, BertModel
 
 from nemo.backends.pytorch.nm import TrainableNM
 from nemo.core.neural_modules import PretrainedModelInfo

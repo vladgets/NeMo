@@ -20,7 +20,7 @@ from typing import List, Optional
 
 from transformers import (
     ALBERT_PRETRAINED_CONFIG_ARCHIVE_MAP,
-    ALBERT_PRETRAINED_MODEL_ARCHIVE_MAP,
+    ALBERT_PRETRAINED_MODEL_ARCHIVE_LIST,
     AlbertConfig,
     AlbertModel,
 )

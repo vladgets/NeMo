@@ -15,6 +15,7 @@
 # =============================================================================
 
 from nemo.collections.nlp.nm.trainables.common.huggingface.albert_nm import Albert
+from nemo.collections.nlp.nm.trainables.common.huggingface.bart_nm import BartForConditionalGeneration
 from nemo.collections.nlp.nm.trainables.common.huggingface.bert_nm import BERT
 from nemo.collections.nlp.nm.trainables.common.huggingface.roberta_nm import Roberta
 
@@ -43,6 +44,7 @@ MODELS = {
     'bert': {'default': 'bert-base-uncased', 'class': BERT},
     'roberta': {'default': 'roberta-base', 'class': Roberta},
     'albert': {'default': 'albert-base-v2', 'class': Albert},
+    'bart': {'default': 'bart-large', 'class': BartForConditionalGeneration},
 }
 
 

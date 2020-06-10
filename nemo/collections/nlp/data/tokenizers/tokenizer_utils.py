@@ -15,7 +15,7 @@
 # =============================================================================
 import os
 
-from transformers import AlbertTokenizer, BertTokenizer, RobertaTokenizer
+from transformers import AlbertTokenizer, BartTokenizer, BertTokenizer, RobertaTokenizer
 
 import nemo
 from nemo.collections.nlp.nm.trainables.common.megatron.megatron_utils import (
@@ -55,10 +55,24 @@ MODEL_SPECIAL_TOKENS = {
         'eos_token': '[SEP]',
         'cls_token': '[CLS]',
     },
+    'facebook/bart': {  # Tokenizer is inherited from roberta
+        'unk_token': '<unk>',
+        'sep_token': '</s>',
+        'pad_token': '<pad>',
+        'bos_token': '<s>',
+        'mask_token': '<mask>',
+        'eos_token': '</s>',
+        'cls_token': '<s>',
+    },
 }
 
 
-TOKENIZERS = {'bert': BertTokenizer, 'albert': AlbertTokenizer, 'roberta': RobertaTokenizer}
+TOKENIZERS = {
+    'bert': BertTokenizer,
+    'albert': AlbertTokenizer,
+    'roberta': RobertaTokenizer,
+    'facebook/bart': BartTokenizer,
+}
 
 
 def get_bert_special_tokens(bert_derivative):
